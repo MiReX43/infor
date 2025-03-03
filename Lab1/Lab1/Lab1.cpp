@@ -4,75 +4,80 @@
 
 using namespace std;
 
-double round(double value, double relative_error) {
-    int significant_digits = ceil(-log10(relative_error / 100.0)); 
-    return round(value * pow(10, significant_digits)) / pow(10, significant_digits);
-}
-
 int main() {
 
     setlocale(LC_ALL,"RUS");
+
+
     //Ex(в)
 
-    double number;
-    cout << "Введите приближенное число: ";
-    cin >> number;
+        double number;
+        cout << "Введите приближенное число: ";
+        cin >> number;
 
-    // Предельная абсолютная погрешность
-    double absoluteError = pow(10, floor(log10(number) - 1)) / 2;
+        // Предельная абсолютная погрешность
+        double absoluteError = pow(10, floor(log10(number) - 2)) / 2;
 
-    // Предельная относительная погрешность
-    double relativeError = absoluteError / number;
+        // Предельная относительная погрешность
+        double relativeError = (absoluteError / number) * 100;
 
-    // Вывод результатов
-    cout << "Приближенное число: " << number << endl;
-    cout << "Предельная абсолютная погрешность: " << absoluteError << endl;
-    cout << "Предельная относительная погрешность: " << relativeError << endl;
+        // Вывод результатов
+        cout << "Приближенное число: " << number << endl;
+        cout << "Предельная абсолютная погрешность: " << absoluteError << endl;
+        cout << "Предельная относительная погрешность: " << setprecision(3) << relativeError << "%" << endl;
 
-    return 0;
+        return 0;
+
 
     //Ex1(б)
 
-    double value, reletive_error;
+        // Исходные данные
+        double num;
+        double delta_percent;
 
-    //Ввод данных
-    cout << "Введите число: ";
-    cin >> value;
-    cout << "Введите относительную погрешность (%) : ";
-    cin >> reletive_error;
+        cout << "Введите число: ";
+        cin >> num;
+        cout << "Введите относительную погрешность (%): ";
+        cin >> delta_percent;
+    
 
-    //Округление числа
-    double rounded_value = round(value, reletive_error);
+        // Расчет погрешности
+        double delta = (delta_percent / 100) * num;
 
-    //Вычисление абсолютной погрешности
-    double absolute_error = abs(value - rounded_value);
+        // Округление числа до нужной точности (три знака после запятой)
+        double rounded_number = round(num * 1000) / 1000;
 
-    //Вывод результатов
-    cout << fixed << setprecision(6);
-    cout << "Округленное число: " << rounded_value << endl;
-    cout << "Абсолютная погрешность: " << absolute_error << endl;
+        // Вывод результата
+        cout << fixed << setprecision(4);
+        cout << "Исходное число: " << num << endl;
+        cout << "Погрешность: " << delta << endl;
+        cout << "Округленное число: " << fixed << setprecision(3) << rounded_number << endl;
+        cout << "Абсолютная погрешность: " << delta << endl;
 
 
     //Ex1(a)
+    double a, b, c;
     double exact1, exact2, approx1, approx2;
 
-    // Ввод данных
-    cout << "Введите точное значение первого выражения: ";
-    cin >> exact1;
-    cout << "Введите округленное значение первого выражения: ";
+    // Ввод значений пользователем
+    cout << "Введите a/b: ";
+    cin >> a >> b;
+    exact1 = a / b;
+    cout << "Введите округленное значение для a/b: ";
     cin >> approx1;
-    cout << "Введите точное значение второго выражения: ";
-    cin >> exact2;
-    cout << "Введите округленное значение второго выражения: ";
+    cout << "Введите c для sqrt(c): ";
+    cin >> c;
+    exact2 = sqrt(c);
+    cout << "Введите округленное значение для sqrt(c): ";
     cin >> approx2;
 
-    // Вычисление погрешностей
-    double abs_error1 = exact1 - approx1;
-    double abs_error2 = exact2 - approx2;
+    // Вычисление абсолютных и относительных погрешностей
+    double abs_error1 = fabs(exact1 - approx1);
+    double abs_error2 = fabs(exact2 - approx2);
     double rel_error1 = (abs_error1 / exact1) * 100;
     double rel_error2 = (abs_error2 / exact2) * 100;
 
-    // Вывод результатов
+    // Вывод значений и ошибок
     cout << fixed << setprecision(10);
     cout << "\nТочные значения:\n";
     cout << "Выражение 1 = " << exact1 << "\n";
@@ -94,5 +99,9 @@ int main() {
         cout << "Выражение 2 более точное.\n";
     }
 
-    return 0;
+    
+    
+
+    
+
 }

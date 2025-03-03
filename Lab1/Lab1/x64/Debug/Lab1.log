@@ -1,3 +1,2 @@
 ﻿  Lab1.cpp
-C:\Users\dengi\source\infor\Lab1\Lab1\Lab1.cpp(8,28): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
   Lab1.vcxproj -> C:\Users\dengi\source\infor\Lab1\x64\Debug\Lab1.exe
