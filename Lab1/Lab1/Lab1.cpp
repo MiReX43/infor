@@ -1,58 +1,59 @@
 #include <iostream>
 #include <cmath>
 #include <iomanip>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
+int zero(double num) {
+    stringstream ss;
+    ss << fixed << setprecision(15) << num;
+    string buf = ss.str();
+
+    size_t pointPos = buf.find('.');
+    if (pointPos == string::npos) {
+        return 0;
+    }
+
+    int count = 0;
+    for (size_t i = pointPos + 1; i < buf.length() && buf[i] == '0'; ++i) {
+        count++;
+    }
+    return count;
+}
+
+double roundToPrecision(double num, int n) {
+    double factor = pow(10.0, n);
+    return std::round(num * factor) / factor;
+}
+
 int main() {
 
-    setlocale(LC_ALL,"RUS");
-
-
-    //Ex(в)
-
-        double number;
-        cout << "Введите приближенное число: ";
-        cin >> number;
-
-        // Предельная абсолютная погрешность
-        double absoluteError = pow(10, floor(log10(number) - 2)) / 2;
-
-        // Предельная относительная погрешность
-        double relativeError = (absoluteError / number) * 100;
-
-        // Вывод результатов
-        cout << "Приближенное число: " << number << endl;
-        cout << "Предельная абсолютная погрешность: " << absoluteError << endl;
-        cout << "Предельная относительная погрешность: " << setprecision(3) << relativeError << "%" << endl;
-
-        return 0;
-
+    setlocale(LC_ALL, "RUS");
 
     //Ex1(б)
 
-        // Исходные данные
-        double num;
-        double delta_percent;
+    // Исходные данные
+    double num;
+    double delta;
 
-        cout << "Введите число: ";
-        cin >> num;
-        cout << "Введите относительную погрешность (%): ";
-        cin >> delta_percent;
-    
+    cout << "Введите число: ";
+    cin >> num;
+    cout << "Введите погрешность (%): ";
+    cin >> delta;
 
-        // Расчет погрешности
-        double delta = (delta_percent / 100) * num;
+    // Округление числа до нужной точности
+    double rounded_num = roundToPrecision(num, zero(delta / 100));
 
-        // Округление числа до нужной точности (три знака после запятой)
-        double rounded_number = round(num * 1000) / 1000;
+    // Расчет абсолютной погрешности
+    double res = num - rounded_num;
 
-        // Вывод результата
-        cout << fixed << setprecision(4);
-        cout << "Исходное число: " << num << endl;
-        cout << "Погрешность: " << delta << endl;
-        cout << "Округленное число: " << fixed << setprecision(3) << rounded_number << endl;
-        cout << "Абсолютная погрешность: " << delta << endl;
+    // Вывод результата
+    cout << "Округленное число: " << rounded_num << endl;
+    cout << "Абсолютная погрешность: " << res << endl;
+
+    return 0;
 
 
     //Ex1(a)
@@ -99,9 +100,25 @@ int main() {
         cout << "Выражение 2 более точное.\n";
     }
 
-    
-    
 
-    
+
+    //Ex(в)
+
+    double number;
+    cout << "Введите приближенное число: ";
+    cin >> number;
+
+    // Предельная абсолютная погрешность
+    double absoluteError = pow(10, floor(log10(number) - 2)) / 2;
+
+    // Предельная относительная погрешность
+    double relativeError = (absoluteError / number) * 100;
+
+    // Вывод результатов
+    cout << "Приближенное число: " << number << endl;
+    cout << "Предельная абсолютная погрешность: " << absoluteError << endl;
+    cout << "Предельная относительная погрешность: " << setprecision(3) << relativeError << "%" << endl;
+
+    return 0;
 
 }
