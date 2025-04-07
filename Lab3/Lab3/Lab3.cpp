@@ -1,66 +1,99 @@
 #include <iostream>
 #include <cmath>
-#include <vector>
-
+#include <iomanip>
 using namespace std;
 
-// Заданная точность
-const double EPS = 1e-6;
-
-// Функция f(x) = arctg(x) - (1 / (3 * x^3))
+// Функция f(x)
 double f(double x) {
-    return atan(x) - (1.0 / (3 * pow(x, 3)));
+    if (x == 0.0) return INFINITY; // защита от деления на ноль
+    return atan(x) - 1.0 / pow(x, 3);
 }
 
-// Поиск интервалов изоляции корней на заданном отрезке [a, b] с шагом step
-vector<pair<double, double>> find_isolation_intervals(double a, double b, double step) {
-    vector<pair<double, double>> intervals;
-    double x1 = a, x2 = a + step;
-    while (x2 <= b) {
-        if (f(x1) * f(x2) < 0) {  // Если знаки разные, значит, есть корень
-            intervals.push_back({ x1, x2 });
-        }
-        x1 = x2;
-        x2 += step;
-    }
-    return intervals;
-}
+// Метод дихотомии с выводом всех итераций
+void dichotomy(double a, double b, double eps, double& x, double& fx, int& iterations) {
+    double f1 = f(a);
+    iterations = 1;
 
-// Метод бисекции для нахождения корня уравнения f(x) = 0 на отрезке [a, b]
-pair<double, int> bisection(double a, double b) {
-    int iterations = 0;
-    double mid;
-    while ((b - a) / 2 > EPS) {
-        mid = (a + b) / 2;
-        if (f(mid) == 0) break;
-        if (f(a) * f(mid) < 0) {
-            b = mid;
+    cout << "\n  Итерации для интервала [" << a << "; " << b << "]" << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+    cout << "  № |       a        |       b        |       x       |     f(x)" << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+
+    while (fabs(b - a) > eps) {
+        double t = (a + b) / 2.0;
+        double f2 = f(t);
+
+        cout << setw(3) << iterations << "    "
+            << setw(9) << a << "    "
+            << setw(9) << b << "    "
+            << setw(9) << t << "    "
+            << setw(9) << f2 << endl;
+
+        if (f1 * f2 < 0) {
+            b = t;
         }
         else {
-            a = mid;
+            a = t;
+            f1 = f2;
         }
         iterations++;
     }
-    return { mid, iterations };
+
+    x = (a + b) / 2.0;
+    fx = f(x);
+
+    cout << "  --------------------------------------------------------------------\n";
+}
+
+// Поиск интервалов и решение
+void findRoots(double a, double b, double step, double eps) {
+    cout << fixed << setprecision(10);
+    double x1 = a, x2;
+    bool rootFound = false;
+
+    while (x1 < b) {
+        x2 = x1 + step;
+
+        // Исключаем область около x = 0
+        if (fabs(x1) < 1e-3 || fabs(x2) < 1e-3) {
+            x1 = x2;
+            continue;
+        }
+
+        // Проверка на смену знака
+        if (f(x1) * f(x2) < 0) {
+            rootFound = true;
+            double x, fx;
+            int iterations;
+            dichotomy(x1, x2, eps, x, fx, iterations);
+            cout << "\nНайден корень на интервале: [" << x1 << "; " << x2 << "]" << endl;
+            cout << "Корень: x = " << x << ", f(x) = " << fx << ", итераций: " << iterations << endl << endl;
+        }
+
+        x1 = x2;
+    }
+
+    if (!rootFound) {
+        cout << "Корни не найдены на данном интервале." << endl;
+    }
 }
 
 int main() {
-    double a = -5.0, b = 5.0;  // Границы поиска корней
-    double step = 0.1;         // Шаг для поиска интервалов изоляции
+    setlocale(LC_ALL, "RUS");
 
-    // Поиск интервалов изоляции
-    vector<pair<double, double>> intervals = find_isolation_intervals(a, b, step);
+    double a, b, step, eps;
 
-    cout << "Найденные интервалы изоляции корней:" << endl;
-    for (const auto& interval : intervals) {
-        cout << "[" << interval.first << ", " << interval.second << "]" << endl;
-    }
+    cout << "Решение уравнения: arctg(x) - 1 / x^3 = 0" << endl;
+    cout << "Введите начальное значение интервала (a): ";
+    cin >> a;
+    cout << "Введите конечное значение интервала (b): ";
+    cin >> b;
+    cout << "Введите шаг для поиска изоляции корней: ";
+    cin >> step;
+    cout << "Введите точность (eps): ";
+    cin >> eps;
 
-    cout << "\nПоиск корней методом бисекции:" << endl;
-    for (const auto& interval : intervals) {
-        auto [root, iterations] = bisection(interval.first, interval.second);
-        cout << "Корень: " << root << " f(корень) = " << f(root) << " Итераций: " << iterations << endl;
-    }
+    findRoots(a, b, step, eps);
 
     return 0;
 }
