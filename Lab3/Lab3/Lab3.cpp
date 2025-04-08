@@ -6,7 +6,7 @@ using namespace std;
 // Функция f(x)
 double f(double x) {
     if (x == 0.0) return INFINITY; // защита от деления на ноль
-    return atan(x) - 1.0 / pow(x, 3);
+    return atan(x) - 1.0 / (3 * pow(x, 3));
 }
 
 // Метод дихотомии с выводом всех итераций
@@ -45,8 +45,52 @@ void dichotomy(double a, double b, double eps, double& x, double& fx, int& itera
     cout << "  --------------------------------------------------------------------\n";
 }
 
+// Метод хорд
+void chords(double a, double b, double eps, double& x, double& fx, int& iterations) {
+    double f1 = f(a), f2 = f(b);
+    iterations = 1;
+    double z, h;
+
+    cout << "\n  Итерации метода хорд [" << a << "; " << b << "]" << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+    cout << "  №  |       x       |       z       |       f(x)     |        h   " << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+
+    if (f1 * f2 >= 0) {
+        cout << "На этом интервале нет корня (нет смены знака)." << endl;
+        return;
+    }
+
+    if (f1 * f2 > 0) {
+        x = b;
+        z = a;
+    }
+    else {
+        x = a;
+        z = b;
+    }
+
+    do {
+        double fz = f(z);
+        f1 = f(x);
+        h = (x - z) / (f1 - fz) * f1;
+        x = x - h;
+
+        cout << setw(3) << iterations << "    "
+            << setw(9) << x << "    "
+            << setw(9) << z << "    "
+            << setw(9) << f1 << "    "
+            << setw(9) << h << endl;
+
+        iterations++;
+    } while (fabs(h) > eps);
+
+    fx = f(x);
+    cout << "  --------------------------------------------------------------------\n";
+}
+
 // Поиск интервалов и решение
-void findRoots(double a, double b, double step, double eps) {
+void findRoots(double a, double b, double step, double eps, int method) {
     cout << fixed << setprecision(10);
     double x1 = a, x2;
     bool rootFound = false;
@@ -65,7 +109,12 @@ void findRoots(double a, double b, double step, double eps) {
             rootFound = true;
             double x, fx;
             int iterations;
-            dichotomy(x1, x2, eps, x, fx, iterations);
+
+            if (method == 1)
+                dichotomy(x1, x2, eps, x, fx, iterations);
+            else
+                chords(x1, x2, eps, x, fx, iterations);
+
             cout << "\nНайден корень на интервале: [" << x1 << "; " << x2 << "]" << endl;
             cout << "Корень: x = " << x << ", f(x) = " << fx << ", итераций: " << iterations << endl << endl;
         }
@@ -82,8 +131,9 @@ int main() {
     setlocale(LC_ALL, "RUS");
 
     double a, b, step, eps;
+    int choice;
 
-    cout << "Решение уравнения: arctg(x) - 1 / x^3 = 0" << endl;
+    cout << "Решение уравнения: arctg(x) - 1 / (3x^3) = 0" << endl;
     cout << "Введите начальное значение интервала (a): ";
     cin >> a;
     cout << "Введите конечное значение интервала (b): ";
@@ -93,7 +143,54 @@ int main() {
     cout << "Введите точность (eps): ";
     cin >> eps;
 
-    findRoots(a, b, step, eps);
+    while (1) {
+        cout << "\n========== ГЛАВНОЕ МЕНЮ ==========\n";
+        cout << "\nВыберите метод решения нелинейный алгебраических уравнений\n";
+        cout << "1. Метод деления отрезка попалам (дихотоммм)\n";
+        cout << "2. Метод хорд\n";
+        cout << "3. Метод 3\n";
+        cout << "4. Метод 4\n";
+        cout << "5. Метод 5\n";
+        cout << "6. Метод 6\n";
+        cout << "7. Выход из программы \n";
+        cout << "==================================\n";
+        cout << "Выберите действие: ";
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cout << "Метод деления отрезка попалам (дихотоммм)";
+
+            findRoots(a, b, step, eps, choice);
+            break;
+
+        case 2:
+            cout << "Метод хорд";
+            findRoots(a, b, step, eps, choice);
+            break;
+        case 3:
+            cout << "Метод 3";
+            break;
+
+        case 4:
+            cout << "Метод 4";
+            break;
+        case 5:
+            cout << "Метод 5";
+            break;
+        case 6:
+            cout << "Метод 6";
+            break;
+        case 7:
+            cout << "Выход из программы. До свидания!\n";
+            return 0;
+
+        default:
+            cout << "Ошибка: Неверный выбор! Попробуйте снова.\n";
+
+        }
+
+    }
 
     return 0;
 }
