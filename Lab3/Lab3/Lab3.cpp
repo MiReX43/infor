@@ -9,6 +9,12 @@ double f(double x) {
     return atan(x) - 1.0 / (3 * pow(x, 3));
 }
 
+// Производная функции f(x)
+double df(double x) {
+    if (x == 0.0) return INFINITY;
+    return 1.0 / (1 + x * x) + 1.0 / pow(x, 4);
+}
+
 // Метод дихотомии с выводом всех итераций
 void dichotomy(double a, double b, double eps, double& x, double& fx, int& iterations) {
     double f1 = f(a);
@@ -89,6 +95,35 @@ void chords(double a, double b, double eps, double& x, double& fx, int& iteratio
     cout << "  --------------------------------------------------------------------\n";
 }
 
+// Метод Ньютона (метод касательных)
+void newtonMethod(double a, double b, double eps, double& x, double& fx, int& iterations) {
+    iterations = 1;
+    x = (a + b) / 2.0; // начальное приближение
+
+    cout << "\n  Итерации метода Ньютона (касательных) [" << a << "; " << b << "]" << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+    cout << "  №  |       x      |      f(x)     |      f'(x)     |    delta x" << endl;
+    cout << "  --------------------------------------------------------------------" << endl;
+
+    double h;
+    do {
+        fx = f(x);
+        double dfx = df(x);
+        h = fx / dfx;
+        cout << setw(3) << iterations << "   "
+            << setw(9) << x << "    "
+            << setw(9) << fx << "    "
+            << setw(9) << dfx << "    "
+            << setw(9) << h << endl;
+
+        x = x - h;
+        iterations++;
+    } while (fabs(h) > eps);
+
+    fx = f(x);
+    cout << "  ---------------------------------------------------------------------\n";
+}
+
 // Поиск интервалов и решение
 void findRoots(double a, double b, double step, double eps, int method) {
     cout << fixed << setprecision(10);
@@ -112,8 +147,12 @@ void findRoots(double a, double b, double step, double eps, int method) {
 
             if (method == 1)
                 dichotomy(x1, x2, eps, x, fx, iterations);
-            else
+            else if (method == 2)
                 chords(x1, x2, eps, x, fx, iterations);
+            else if (method == 3)
+                newtonMethod(x1, x2, eps, x, fx, iterations);
+
+
 
             cout << "\nНайден корень на интервале: [" << x1 << "; " << x2 << "]" << endl;
             cout << "Корень: x = " << x << ", f(x) = " << fx << ", итераций: " << iterations << endl << endl;
@@ -146,40 +185,40 @@ int main() {
     while (1) {
         cout << "\n========== ГЛАВНОЕ МЕНЮ ==========\n";
         cout << "\nВыберите метод решения нелинейный алгебраических уравнений\n";
-        cout << "1. Метод деления отрезка попалам (дихотоммм)\n";
-        cout << "2. Метод хорд\n";
-        cout << "3. Метод 3\n";
-        cout << "4. Метод 4\n";
-        cout << "5. Метод 5\n";
-        cout << "6. Метод 6\n";
+        cout << "1. Метод Деления отрезка попалам (Дихотоммм)\n";
+        cout << "2. Метод Хорд\n";
+        cout << "3. Метод Касательных (метод Ньютона)\n";
+        cout << "4. Метод Последовательных приближений (метод Простых итераций)\n";
+        cout << "5. Метод Ceкущих\n";
+        cout << "6. Комбинированный метод Хорд и Касательных\n";
         cout << "7. Выход из программы \n";
-        cout << "==================================\n";
+        cout << "\n==================================\n";
         cout << "Выберите действие: ";
         cin >> choice;
 
         switch (choice) {
         case 1:
-            cout << "Метод деления отрезка попалам (дихотоммм)";
+            cout << "\nМетод деления отрезка попалам (дихотоммм)\n";
 
             findRoots(a, b, step, eps, choice);
             break;
 
         case 2:
-            cout << "Метод хорд";
+            cout << "\nМетод Хорд\n";
             findRoots(a, b, step, eps, choice);
             break;
         case 3:
-            cout << "Метод 3";
+            cout << "\nМетод Касательных (метод Ньютона)\n";
+            findRoots(a, b, step, eps, choice);
             break;
-
         case 4:
-            cout << "Метод 4";
+            cout << "\nМетод Последовательных приближений (метод Простых итераций)\n";
             break;
         case 5:
-            cout << "Метод 5";
+            cout << "Метод Секущих";
             break;
         case 6:
-            cout << "Метод 6";
+            cout << "Комбинированный метод Хорд и Касательных";
             break;
         case 7:
             cout << "Выход из программы. До свидания!\n";
