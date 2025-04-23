@@ -167,7 +167,7 @@ void simpleIterations(double a, double b, double eps, double& x, double& fx, int
     cout << "  -----------------------------------------------\n";
 }
 
-// Метод секущих (метод Регулы Фальси)
+// Метод секущих
 void secantMethod(double a, double b, double eps, double& x, double& fx, int& iterations) {
     iterations = 1;
 
